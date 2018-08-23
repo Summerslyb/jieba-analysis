@@ -1,4 +1,6 @@
-package com.huaban.analysis.jieba;
+package me.slkun;
+
+import me.slkun.bean.Hit;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,7 +10,7 @@ import java.util.Map;
 /**
  * 词典树分段，表示词典树的一个分枝
  */
-class DictSegment implements Comparable<DictSegment> {
+public class DictSegment implements Comparable<DictSegment> {
 
     // 公用字典表，存储汉字
     private static final Map<Character, Character> charMap = new HashMap<Character, Character>(16, 0.95f);
@@ -309,13 +311,6 @@ class DictSegment implements Comparable<DictSegment> {
         }
     }
 
-
-    /**
-     * 实现Comparable接口
-     *
-     * @param o
-     * @return int
-     */
     public int compareTo(DictSegment o) {
         // 对当前节点存储的char进行比较
         return this.nodeChar.compareTo(o.nodeChar);

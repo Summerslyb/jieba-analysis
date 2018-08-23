@@ -1,8 +1,8 @@
-package com.huaban.analysis.jieba;
+package me.slkun.bean;
 
 public class Pair<K> {
     public K key;
-    public Double freq = 0.0;
+    public Double freq;
 
     public Pair(K key, double freq) {
         this.key = key;

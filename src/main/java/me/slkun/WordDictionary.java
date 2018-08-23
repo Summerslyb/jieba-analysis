@@ -1,4 +1,4 @@
-package com.huaban.analysis.jieba;
+package me.slkun;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.util.Map.Entry;
 
 public class WordDictionary {
     private static WordDictionary singleton;
-    private static final String MAIN_DICT = "/dict.txt";
+    private static final String MAIN_DICT = "/dict.big.txt";
     private static String USER_DICT_SUFFIX = ".dict";
 
     public final Map<String, Double> freqs = new HashMap<String, Double>();
@@ -45,8 +45,6 @@ public class WordDictionary {
 
     /**
      * for ES to initialize the user dictionary.
-     *
-     * @param configFile
      */
     public void init(Path configFile) {
         String abspath = configFile.toAbsolutePath().toString();
@@ -64,8 +62,6 @@ public class WordDictionary {
                 }
                 loadedPath.add(abspath);
             }catch(IOException e){
-                // TODO Auto-generated catch block
-                // e.printStackTrace();
                 System.err.println(String.format(Locale.getDefault(), "%s: load user dict failure!", configFile.toString()));
             }
         }
@@ -151,7 +147,7 @@ public class WordDictionary {
                 }
 
                 String word = tokens[0];
-                double freq = 3.0d; // default count
+                double freq = 10.0d; // default count
                 if(tokens.length > 2){
                     freq = Double.valueOf(tokens[1]);
                 }

@@ -1,6 +1,10 @@
-package com.huaban.analysis.jieba;
+package me.slkun;
 
-import com.huaban.analysis.jieba.viterbi.FinalSeg;
+import me.slkun.bean.Hit;
+import me.slkun.bean.Pair;
+import me.slkun.bean.SegToken;
+import me.slkun.util.CharacterUtil;
+import me.slkun.viterbi.FinalSeg;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +16,7 @@ public class JiebaSegmenter {
     private static WordDictionary wordDict = WordDictionary.getInstance();
     private static FinalSeg finalSeg = FinalSeg.getInstance();
 
-    public static enum SegMode {
+    public enum SegMode {
         INDEX,
         SEARCH
     }
@@ -157,9 +161,6 @@ public class JiebaSegmenter {
     }
 
 
-    /*
-     *
-     */
     public List<String> sentenceProcess(String sentence) {
         List<String> tokens = new ArrayList<String>();
         int N = sentence.length();

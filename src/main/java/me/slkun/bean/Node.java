@@ -1,4 +1,4 @@
-package com.huaban.analysis.jieba;
+package me.slkun.bean;
 
 public class Node {
     public Character value;

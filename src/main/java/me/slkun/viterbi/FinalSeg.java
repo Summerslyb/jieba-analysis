@@ -1,8 +1,8 @@
-package com.huaban.analysis.jieba.viterbi;
+package me.slkun.viterbi;
 
-import com.huaban.analysis.jieba.CharacterUtil;
-import com.huaban.analysis.jieba.Node;
-import com.huaban.analysis.jieba.Pair;
+import me.slkun.util.CharacterUtil;
+import me.slkun.bean.Node;
+import me.slkun.bean.Pair;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,7 +22,6 @@ public class FinalSeg {
     private static Map<Character, Map<Character, Double>> trans;
     private static Map<Character, char[]> prevStatus;
     private static Double MIN_FLOAT = -3.14e100;
-    ;
 
 
     private FinalSeg() {
@@ -40,19 +39,19 @@ public class FinalSeg {
 
     private void loadModel() {
         long s = System.currentTimeMillis();
-        prevStatus = new HashMap<Character, char[]>();
+        prevStatus = new HashMap<>();
         prevStatus.put('B', new char[]{'E', 'S'});
         prevStatus.put('M', new char[]{'M', 'B'});
         prevStatus.put('S', new char[]{'S', 'E'});
         prevStatus.put('E', new char[]{'B', 'M'});
 
-        start = new HashMap<Character, Double>();
+        start = new HashMap<>();
         start.put('B', -0.26268660809250016);
         start.put('E', -3.14e+100);
         start.put('M', -3.14e+100);
         start.put('S', -1.4652633398537678);
 
-        trans = new HashMap<Character, Map<Character, Double>>();
+        trans = new HashMap<>();
         Map<Character, Double> transB = new HashMap<Character, Double>();
         transB.put('E', -0.510825623765990);
         transB.put('M', -0.916290731874155);
@@ -73,13 +72,13 @@ public class FinalSeg {
         InputStream is = this.getClass().getResourceAsStream(PROB_EMIT);
         try{
             BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-            emit = new HashMap<Character, Map<Character, Double>>();
+            emit = new HashMap<>();
             Map<Character, Double> values = null;
             while(br.ready()){
                 String line = br.readLine();
                 String[] tokens = line.split("\t");
                 if(tokens.length == 1){
-                    values = new HashMap<Character, Double>();
+                    values = new HashMap<>();
                     emit.put(tokens[0].charAt(0), values);
                 }else{
                     values.put(tokens[0].charAt(0), Double.valueOf(tokens[1]));
@@ -156,7 +155,7 @@ public class FinalSeg {
                         tranp = MIN_FLOAT;
                     tranp += (emp + v.get(i - 1).get(y0));
                     if(null == candidate)
-                        candidate = new Pair<Character>(y0, tranp);
+                        candidate = new Pair<>(y0, tranp);
                     else if(candidate.freq <= tranp){
                         candidate.freq = tranp;
                         candidate.key = y0;

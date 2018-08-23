@@ -1,9 +1,17 @@
-package com.huaban.analysis.jieba;
+package me.slkun;
 
-import com.huaban.analysis.jieba.JiebaSegmenter.SegMode;
+import me.slkun.JiebaSegmenter;
+import me.slkun.JiebaSegmenter.SegMode;
+import me.slkun.WordDictionary;
+import me.slkun.bean.SegToken;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
@@ -29,19 +37,12 @@ public class JiebaSegmenterTest {
     private String[] longSentences = new String[]{
             "《妄想症：Deliver Me》是属音制作组制作的一款音乐主题的青春校园AVG游戏。故事内容根据雨狸的《妄想症Paranoia》小说改编，讲述了一个追逐音乐梦想的少女泠珞因为失去伙伴，失去对他人和世界的信任，被自己一层一层的妄想困住的故事。玩家将扮演泠珞，体验青春、音乐与校园的缤纷故事，同时收集不同的回忆线索，找回失落的乐谱，解开层层谜题，回忆起令人震惊的真相，最终尝试走出妄想世界并重获新生。",
     };
-    private String[] bugSentences = new String[]{
-            "UTF-8",
-            "iphone5",
-            "鲜芋仙 3",
-            "RT @laoshipukong : 27日，",
-            "AT&T是一件不错的公司，给你发offer了吗？",
-            "干脆就把那部蒙人的闲法给废了拉倒！RT @laoshipukong : 27日，全国人大常委会第三次审议侵权责任法草案，删除了有关医疗损害责任“举证倒置”的规定。在医患纠纷中本已处于弱势地位的消费者由此将陷入万劫不复的境地。 "};
 
 
     private void printOnlyWord(List<SegToken> tokens) {
         StringBuilder builder = new StringBuilder();
         for(SegToken token : tokens){
-            builder.append(token.word).append(" ");
+            builder.append(token.getWord()).append(" ");
         }
         System.out.println(builder.toString());
     }
@@ -82,16 +83,6 @@ public class JiebaSegmenterTest {
 
 
     @Test
-    public void testBugSentence() {
-        System.out.println("BUGS: ");
-        for(String sentence : bugSentences){
-            List<SegToken> tokens = segmenter.process(sentence, SegMode.SEARCH);
-            printOnlyWord(tokens);
-        }
-    }
-
-
-    @Test
     public void testSegmentSpeed() {
         long length = 0L;
         long wordCount = 0L;
@@ -122,5 +113,17 @@ public class JiebaSegmenterTest {
         long elapsed = (System.currentTimeMillis() - start);
         System.out.printf(Locale.CHINA, "testLongTextSegmentSpeed: time elapsed:%d, rate:%fkb/s, sentences:%.2f/s\n", elapsed,
                 (length * 1.0) / 1024.0f / (elapsed * 1.0 / 1000.0f), wordCount * 1000.0f / (elapsed * 1.0));
+    }
+
+    @Test
+    public void testReadFromFile() throws IOException {
+        InputStream is = this.getClass().getResourceAsStream("/test.txt");
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+        while(br.ready()){
+            String line = br.readLine();
+
+            List<SegToken> tokens = segmenter.process(line, SegMode.SEARCH);
+            printOnlyWord(tokens);
+        }
     }
 }
