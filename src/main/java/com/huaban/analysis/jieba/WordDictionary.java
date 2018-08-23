@@ -160,8 +160,8 @@ public class WordDictionary {
 
                 String word = tokens[0];
                 double freq = 3.0d; // default count
-                if (tokens.length == 2){
-                    freq += Double.valueOf(tokens[1]);
+                if (tokens.length > 2){
+                    freq = Double.valueOf(tokens[1]);
                 }
                 freq = Math.log(freq/total); // calculate freq
 

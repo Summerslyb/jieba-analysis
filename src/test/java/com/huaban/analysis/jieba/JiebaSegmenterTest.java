@@ -1,18 +1,15 @@
 package com.huaban.analysis.jieba;
 
 import com.huaban.analysis.jieba.JiebaSegmenter.SegMode;
-import junit.framework.TestCase;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * @author matrix
- */
-public class JiebaSegmenterTest extends TestCase {
+public class JiebaSegmenterTest {
     private JiebaSegmenter segmenter = new JiebaSegmenter();
     private String[] sentences = new String[]{
             "一个被遗落的名字，一段被忘却的记忆，",
@@ -32,60 +29,64 @@ public class JiebaSegmenterTest extends TestCase {
     private String[] longSentences = new String[]{
             "《妄想症：Deliver Me》是属音制作组制作的一款音乐主题的青春校园AVG游戏。故事内容根据雨狸的《妄想症Paranoia》小说改编，讲述了一个追逐音乐梦想的少女泠珞因为失去伙伴，失去对他人和世界的信任，被自己一层一层的妄想困住的故事。玩家将扮演泠珞，体验青春、音乐与校园的缤纷故事，同时收集不同的回忆线索，找回失落的乐谱，解开层层谜题，回忆起令人震惊的真相，最终尝试走出妄想世界并重获新生。",
     };
+    private String[] bugSentences = new String[]{
+            "UTF-8",
+            "iphone5",
+            "鲜芋仙 3",
+            "RT @laoshipukong : 27日，",
+            "AT&T是一件不错的公司，给你发offer了吗？",
+            "干脆就把那部蒙人的闲法给废了拉倒！RT @laoshipukong : 27日，全国人大常委会第三次审议侵权责任法草案，删除了有关医疗损害责任“举证倒置”的规定。在医患纠纷中本已处于弱势地位的消费者由此将陷入万劫不复的境地。 "};
 
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        WordDictionary.getInstance().init(Paths.get("conf"));
+    private void printOnlyWord(List<SegToken> tokens) {
+        StringBuilder builder = new StringBuilder();
+        for(SegToken token : tokens){
+            builder.append(token.word).append(" ");
+        }
+        System.out.println(builder.toString());
     }
 
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @BeforeAll
+    public static void init() {
+        WordDictionary.getInstance().init(Paths.get("conf"));
     }
 
 
     @Test
     public void testCutForSearch() {
+        System.out.println("SEARCH: ");
         for(String sentence : sentences){
             List<SegToken> tokens = segmenter.process(sentence, SegMode.SEARCH);
-//            System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
-            tokens.forEach(t -> System.out.print(t.word + " "));
-            System.out.println();
+            printOnlyWord(tokens);
         }
         for(String sentence : longSentences){
             List<SegToken> tokens = segmenter.process(sentence, SegMode.SEARCH);
-//            System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
-            tokens.forEach(t -> System.out.print(t.word + " "));
-            System.out.println();
+            printOnlyWord(tokens);
         }
     }
 
 
     @Test
     public void testCutForIndex() {
+        System.out.println("INDEX: ");
         for(String sentence : sentences){
             List<SegToken> tokens = segmenter.process(sentence, SegMode.INDEX);
-            System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
+            printOnlyWord(tokens);
+        }
+        for(String sentence : longSentences){
+            List<SegToken> tokens = segmenter.process(sentence, SegMode.INDEX);
+            printOnlyWord(tokens);
         }
     }
 
 
     @Test
     public void testBugSentence() {
-        String[] bugs =
-                new String[]{
-                        "UTF-8",
-                        "iphone5",
-                        "鲜芋仙 3",
-                        "RT @laoshipukong : 27日，",
-                        "AT&T是一件不错的公司，给你发offer了吗？",
-                        "干脆就把那部蒙人的闲法给废了拉倒！RT @laoshipukong : 27日，全国人大常委会第三次审议侵权责任法草案，删除了有关医疗损害责任“举证倒置”的规定。在医患纠纷中本已处于弱势地位的消费者由此将陷入万劫不复的境地。 "};
-        for(String sentence : bugs){
+        System.out.println("BUGS: ");
+        for(String sentence : bugSentences){
             List<SegToken> tokens = segmenter.process(sentence, SegMode.SEARCH);
-            System.out.print(String.format(Locale.getDefault(), "\n%s\n%s", sentence, tokens.toString()));
+            printOnlyWord(tokens);
         }
     }
 
@@ -102,8 +103,8 @@ public class JiebaSegmenterTest extends TestCase {
                 wordCount += sentence.length();
             }
         long elapsed = (System.currentTimeMillis() - start);
-        System.out.println(String.format(Locale.getDefault(), "time elapsed:%d, rate:%fkb/s, sentences:%.2f/s", elapsed,
-                (length * 1.0) / 1024.0f / (elapsed * 1.0 / 1000.0f), wordCount * 1000.0f / (elapsed * 1.0)));
+        System.out.printf(Locale.CHINA, "testSegmentSpeed: time elapsed:%d, rate:%fkb/s, sentences:%.2f/s\n", elapsed,
+                (length * 1.0) / 1024.0f / (elapsed * 1.0 / 1000.0f), wordCount * 1000.0f / (elapsed * 1.0));
     }
 
 
@@ -119,13 +120,7 @@ public class JiebaSegmenterTest extends TestCase {
                 wordCount += sentence.length();
             }
         long elapsed = (System.currentTimeMillis() - start);
-        System.out.println(String.format(Locale.getDefault(), "time elapsed:%d, rate:%fkb/s, sentences:%.2f/s", elapsed,
-                (length * 1.0) / 1024.0f / (elapsed * 1.0 / 1000.0f), wordCount * 1000.0f / (elapsed * 1.0)));
-    }
-
-    public static void main(String[] args) throws Exception {
-        JiebaSegmenterTest test = new JiebaSegmenterTest();
-        test.setUp();
-        test.testCutForSearch();
+        System.out.printf(Locale.CHINA, "testLongTextSegmentSpeed: time elapsed:%d, rate:%fkb/s, sentences:%.2f/s\n", elapsed,
+                (length * 1.0) / 1024.0f / (elapsed * 1.0 / 1000.0f), wordCount * 1000.0f / (elapsed * 1.0));
     }
 }
