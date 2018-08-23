@@ -1,10 +1,12 @@
-*.class
-\.*
-target/
+# Project Files
+*.iml
+.idea
+target
 
-# Package Files #
+# Package Files
 *.jar
 *.war
 *.ear
 
-jieba-analysis.iml
+# Data Files
+conf
