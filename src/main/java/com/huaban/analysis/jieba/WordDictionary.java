@@ -159,13 +159,17 @@ public class WordDictionary {
                 }
 
                 String word = tokens[0];
+                double freq = 3.0d; // default count
+                if (tokens.length == 2){
+                    freq += Double.valueOf(tokens[1]);
+                }
+                freq = Math.log(freq/total); // calculate freq
 
-                double freq = 3.0d;
-                if (tokens.length == 2)
-                    freq = Double.valueOf(tokens[1]);
-                word = addWord(word); 
-                freqs.put(word, Math.log(freq / total));
-                count++;
+                if(!freqs.containsKey(word) || (freqs.get(word) < freq)){
+                    word = addWord(word);
+                    freqs.put(word, freq);
+                    count++;
+                }
             }
             System.out.println(String.format(Locale.getDefault(), "user dict %s load finished, tot words:%d, time elapsed:%dms", userDict.toString(), count, System.currentTimeMillis() - s));
             br.close();
